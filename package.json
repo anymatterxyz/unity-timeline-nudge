@@ -1,0 +1,24 @@
+{
+  "name": "com.baleev.timeline-nudge",
+  "displayName": "Timeline Nudge",
+  "version": "0.1.0",
+  "unity": "6000.3",
+  "description": "Editor tools for frame-accurate movement and reusable selection groups in Unity Timeline.",
+  "documentationUrl": "https://github.com/anymatterxyz/unity-timeline-nudge#readme",
+  "changelogUrl": "https://github.com/anymatterxyz/unity-timeline-nudge/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/anymatterxyz/unity-timeline-nudge/blob/main/LICENSE.md",
+  "dependencies": {
+    "com.unity.timeline": "1.8.12"
+  },
+  "keywords": [
+    "timeline",
+    "editor",
+    "clips",
+    "nudge",
+    "selection"
+  ],
+  "author": {
+    "name": "AnyMatter",
+    "url": "https://github.com/anymatterxyz"
+  }
+}

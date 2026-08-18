@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="TimelineNudgeTokens.uss" />
+    <Style src="TimelineNudgeWindow.uss" />
+    <ui:VisualElement name="window-root" class="tn-window">
+        <ui:VisualElement class="tn-header">
+            <ui:Label text="Timeline Nudge" class="tn-title" />
+            <ui:Label name="selection-count" text="Клипы не выбраны" class="tn-selection-count" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="tn-section">
+            <ui:IntegerField name="frames-field" label="Кадры" value="5" class="tn-field" tooltip="Количество кадров для смещения выбранных клипов" />
+            <ui:VisualElement class="tn-row tn-row-spaced">
+                <ui:Button name="nudge-left-button" text="← Сместить" class="tn-action-button tn-action-button-left" />
+                <ui:Button name="nudge-right-button" text="Сместить →" class="tn-action-button tn-action-button-right" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="tn-section">
+            <ui:Label text="Сохранённые группы" class="tn-section-title" />
+            <ui:DropdownField name="group-dropdown" label="Группа" class="tn-field" />
+            <ui:VisualElement class="tn-row tn-row-spaced">
+                <ui:Button name="select-group-button" text="Выбрать" class="tn-secondary-button" tooltip="Открыть Timeline и снова выделить все клипы группы" />
+                <ui:Button name="save-group-button" text="Запомнить как…" class="tn-secondary-button-last" tooltip="Создать именованную группу из текущего выделения" />
+            </ui:VisualElement>
+            <ui:VisualElement class="tn-row tn-row-spaced">
+                <ui:Button name="update-group-button" text="Обновить" class="tn-secondary-button" tooltip="Заменить состав выбранной группы текущим выделением" />
+                <ui:Button name="delete-group-button" text="Удалить" class="tn-secondary-button-last" tooltip="Удалить описание группы, не удаляя клипы" />
+            </ui:VisualElement>
+            <ui:VisualElement name="save-group-row" class="tn-row tn-save-row">
+                <ui:TextField name="group-name-field" label="Имя" class="tn-name-field tn-field" />
+                <ui:Button name="confirm-save-button" text="Сохранить" class="tn-compact-button" />
+                <ui:Button name="cancel-save-button" text="Отмена" class="tn-compact-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="status-container" class="tn-status-container" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,10 @@
+:root {
+    /* Package-scoped SSOT: industrial / utilitarian, controlled density. */
+    --tn-space-xs: 3px;
+    --tn-space-sm: 6px;
+    --tn-space-md: 10px;
+    --tn-space-lg: 14px;
+    --tn-control-height: 24px;
+    --tn-action-height: 30px;
+    --tn-label-width: 72px;
+}

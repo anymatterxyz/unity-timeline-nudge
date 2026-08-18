@@ -1,0 +1,22 @@
+{
+  "name": "Baleev.TimelineNudge.Editor.Tests",
+  "rootNamespace": "Baleev.TimelineNudge.Editor.Tests",
+  "references": [
+    "Baleev.TimelineNudge.Editor",
+    "Unity.Timeline"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}
