@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.Timeline;
 using UnityEngine.UIElements;
@@ -294,6 +296,25 @@ namespace Baleev.TimelineNudge.Editor.Tests
             Assert.That(TimelineNudgePreferences.DefaultAutoFrameGroups, Is.True);
             Assert.That(root.Q<Button>("select-group-button"), Is.Not.Null);
             Assert.That(root.Q<Button>("save-group-button"), Is.Not.Null);
+        }
+
+        [Test]
+        public void Window_HasDockTargetAndRemappableOpenShortcut()
+        {
+            Assert.That(TimelineNudgeWindow.PreferredDockTarget, Is.Not.Null);
+            Assert.That(
+                TimelineNudgeWindow.PreferredDockTarget.FullName,
+                Is.EqualTo("UnityEditor.InspectorWindow"));
+
+            MethodInfo shortcutMethod = typeof(TimelineNudgeWindow).GetMethod(
+                "OpenDockableFromShortcut",
+                BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.That(shortcutMethod, Is.Not.Null);
+
+            ShortcutAttribute shortcut =
+                shortcutMethod.GetCustomAttribute<ShortcutAttribute>();
+            Assert.That(shortcut, Is.Not.Null);
+            Assert.That(shortcut.displayName, Is.EqualTo(TimelineNudgeWindow.OpenShortcutId));
         }
 
         private TimelineAsset CreateTimelineAsset(double frameRate)

@@ -1,7 +1,7 @@
 {
   "name": "com.baleev.timeline-nudge",
   "displayName": "Timeline Nudge",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "unity": "6000.3",
   "description": "Editor tools for frame-accurate movement and reusable selection groups in Unity Timeline.",
   "documentationUrl": "https://github.com/anymatterxyz/unity-timeline-nudge#readme",

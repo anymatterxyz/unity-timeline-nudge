@@ -16,18 +16,21 @@ In Unity, open **Window > Package Management > Package Manager**, choose
 **Install package from git URL**, and enter:
 
 ```text
-https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.2.0
+https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.2.1
 ```
 
 Alternatively, add this entry to the project's `Packages/manifest.json` dependencies:
 
 ```json
-"com.baleev.timeline-nudge": "https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.2.0"
+"com.baleev.timeline-nudge": "https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.2.1"
 ```
 
 ## Usage
 
 Open **Window > Sequencing > Timeline Nudge** and select one or more Timeline clips.
+The main command opens a dockable Editor tab beside the Inspector when possible. You can
+drag the tab into any other Unity dock. Use **Timeline Nudge (Floating)** from the same menu
+when you prefer a separate always-on-top utility window.
 
 - Set **Frames** to an integer of `1` or more. The value is remembered by the Editor.
 - Use **Move Left** or **Move Right** to move every selected clip by the same amount.
@@ -41,6 +44,7 @@ or automatic trimming is performed.
 
 ## Shortcuts
 
+- `Ctrl+Alt+N` (`Cmd+Alt+N` on macOS): open or focus the dockable Timeline Nudge window.
 - `Alt+Left Arrow`: move selected clips left by the current **Frames** value.
 - `Alt+Right Arrow`: move selected clips right by the current **Frames** value.
 

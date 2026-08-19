@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+- Changed the main Timeline Nudge window to a dockable Editor tab, placed beside the Inspector when possible.
+- Added the remappable `Ctrl+Alt+N` (`Cmd+Alt+N` on macOS) shortcut for opening the dockable window.
+- Added a separate **Timeline Nudge (Floating)** menu item for the utility-window layout.
+
 ## 0.2.0
 
 - Added automatic Timeline framing after restoring a saved clip group.
