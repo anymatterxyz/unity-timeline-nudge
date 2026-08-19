@@ -6,6 +6,7 @@
 - Added the remappable `Ctrl+Alt+N` (`Cmd+Alt+N` on macOS) shortcut for opening the dockable window.
 - Added a separate **Timeline Nudge (Floating)** menu item for the utility-window layout.
 - Deferred saved-group framing until Timeline finishes applying its restored selection, preventing the viewport from resetting after docking.
+- Added vertical Timeline framing so restoring a group also scrolls to the center of its selected track range.
 
 ## 0.2.0
 

@@ -58,7 +58,7 @@ Select clips and choose **Save As...** to create a named group. A saved group ca
 
 - reopen its source TimelineAsset;
 - restore all of its clips as the current Timeline selection;
-- automatically fit and center the Timeline view on the complete group range;
+- automatically fit the complete time range and vertically center its selected tracks;
 - be updated from the current selection;
 - be deleted without changing any Timeline clips.
 

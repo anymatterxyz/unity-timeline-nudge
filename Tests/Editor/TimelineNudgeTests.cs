@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
@@ -272,7 +273,29 @@ namespace Baleev.TimelineNudge.Editor.Tests
             Assert.That(start, Is.EqualTo(3d));
             Assert.That(end, Is.EqualTo(14d));
             Assert.That(TimelineNudgeFraming.IsSupported, Is.True,
-                "Timeline 1.8.12 FrameSelectedAction.FrameRange compatibility hook was not found.");
+                "Timeline 1.8.12 framing compatibility hooks were not found.");
+            Assert.That(TimelineNudgeFraming.IsVerticalSupported, Is.True,
+                "Timeline 1.8.12 tree-view FrameItem compatibility hook was not found.");
+        }
+
+        [Test]
+        public void Framing_ChoosesTrackAtVerticalCenterOfSelectedRange()
+        {
+            TimelineAsset timeline = CreateTimelineAsset(30d);
+            var tracks = Enumerable.Range(0, 5)
+                .Select(index => timeline.CreateTrack<ActivationTrack>(null, $"Track {index}"))
+                .Cast<TrackAsset>()
+                .ToList();
+            TimelineClip upperClip = CreateClip((ActivationTrack)tracks[1], 1d, 1d);
+            TimelineClip lowerClip = CreateClip((ActivationTrack)tracks[3], 2d, 1d);
+
+            bool found = TimelineNudgeFraming.TryGetVerticalCenterTrack(
+                tracks,
+                new[] { lowerClip, upperClip },
+                out TrackAsset centerTrack);
+
+            Assert.That(found, Is.True);
+            Assert.That(centerTrack, Is.SameAs(tracks[2]));
         }
 
         [Test]
