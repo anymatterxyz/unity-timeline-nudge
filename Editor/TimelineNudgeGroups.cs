@@ -356,29 +356,60 @@ namespace Baleev.TimelineNudge.Editor
             if (TimelineEditor.inspectedAsset != timeline)
                 timelineWindow.SetTimeline(timeline);
 
-            EditorApplication.delayCall += () =>
-            {
-                if (timelineWindow == null)
-                    return;
-
-                if (TimelineEditor.inspectedAsset != timeline)
-                    timelineWindow.SetTimeline(timeline);
-
-                TimelineEditor.selectedClips = clips;
-                TimelineEditor.Refresh(RefreshReason.WindowNeedsRedraw);
-                timelineWindow.Focus();
-
-                if (autoFrame && !TimelineNudgeFraming.TryFrameClips(clips, out string frameError))
+            ScheduleSelectionThenFrame(
+                action => EditorApplication.delayCall += () => action(),
+                () =>
                 {
-                    string message = $"Группа выделена, но центрирование не выполнено: {frameError}";
-                    if (delayedError != null)
-                        delayedError(message);
-                    else
-                        Debug.LogWarning(message);
-                }
-            };
+                    if (timelineWindow == null)
+                        return;
+
+                    if (TimelineEditor.inspectedAsset != timeline)
+                        timelineWindow.SetTimeline(timeline);
+
+                    TimelineEditor.selectedClips = clips;
+                    TimelineEditor.Refresh(RefreshReason.WindowNeedsRedraw);
+                    timelineWindow.Focus();
+                },
+                autoFrame
+                    ? () =>
+                    {
+                        if (timelineWindow == null || TimelineEditor.inspectedAsset != timeline)
+                            return;
+
+                        if (!TimelineNudgeFraming.TryFrameClips(clips, out string frameError))
+                        {
+                            string message =
+                                $"Группа выделена, но центрирование не выполнено: {frameError}";
+                            if (delayedError != null)
+                                delayedError(message);
+                            else
+                                Debug.LogWarning(message);
+                            return;
+                        }
+
+                        TimelineEditor.Refresh(RefreshReason.WindowNeedsRedraw);
+                    }
+                    : null);
 
             return true;
+        }
+
+        internal static void ScheduleSelectionThenFrame(
+            Action<Action> schedule,
+            Action applySelection,
+            Action frameSelection)
+        {
+            if (schedule == null)
+                throw new ArgumentNullException(nameof(schedule));
+            if (applySelection == null)
+                throw new ArgumentNullException(nameof(applySelection));
+
+            schedule(() =>
+            {
+                applySelection();
+                if (frameSelection != null)
+                    schedule(frameSelection);
+            });
         }
     }
 }

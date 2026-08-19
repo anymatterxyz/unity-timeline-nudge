@@ -276,6 +276,32 @@ namespace Baleev.TimelineNudge.Editor.Tests
         }
 
         [Test]
+        public void GroupSelection_FramesOnTheEditorTickAfterSelection()
+        {
+            var scheduled = new Queue<Action>();
+            bool selectionApplied = false;
+            bool framed = false;
+
+            TimelineNudgeGroupSelection.ScheduleSelectionThenFrame(
+                scheduled.Enqueue,
+                () => selectionApplied = true,
+                () =>
+                {
+                    Assert.That(selectionApplied, Is.True);
+                    framed = true;
+                });
+
+            Assert.That(scheduled, Has.Count.EqualTo(1));
+            scheduled.Dequeue().Invoke();
+            Assert.That(selectionApplied, Is.True);
+            Assert.That(framed, Is.False);
+            Assert.That(scheduled, Has.Count.EqualTo(1));
+
+            scheduled.Dequeue().Invoke();
+            Assert.That(framed, Is.True);
+        }
+
+        [Test]
         public void UiAssets_LoadAndContainRequiredControls()
         {
             VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath);
