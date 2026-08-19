@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.ShortcutManagement;
 using UnityEditor.Timeline;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -12,11 +13,17 @@ namespace Baleev.TimelineNudge.Editor
 {
     internal sealed class TimelineNudgeWindow : EditorWindow
     {
+        internal const string DockableMenuPath = "Window/Sequencing/Timeline Nudge";
+        internal const string FloatingMenuPath = "Window/Sequencing/Timeline Nudge (Floating)";
+        internal const string OpenShortcutId = "Timeline Nudge/Open Dockable Window";
+
         private const string UxmlPath =
             "Packages/com.baleev.timeline-nudge/Editor/UI/TimelineNudgeWindow.uxml";
 
         private static readonly Vector2 DefaultSize = new(380f, 265f);
         private static readonly Vector2 MinimumSize = new(360f, 230f);
+        private static readonly Type InspectorWindowType =
+            typeof(EditorWindow).Assembly.GetType("UnityEditor.InspectorWindow");
 
         private readonly List<TimelineNudgeGroupData> _groupOptions = new();
 
@@ -38,21 +45,75 @@ namespace Baleev.TimelineNudge.Editor
 
         private string _selectedGroupId;
         private double _feedbackExpiresAt;
+        [SerializeField] private bool _isUtilityWindow;
 
-        [MenuItem("Window/Sequencing/Timeline Nudge")]
-        private static void Open()
+        internal static Type PreferredDockTarget => InspectorWindowType;
+
+        [MenuItem(DockableMenuPath)]
+        private static void OpenDockableFromMenu()
         {
-            TimelineNudgeWindow window = GetWindow<TimelineNudgeWindow>(
-                true,
-                "Timeline Nudge",
-                true);
+            OpenDockable();
+        }
+
+        [Shortcut(
+            OpenShortcutId,
+            KeyCode.N,
+            ShortcutModifiers.Action | ShortcutModifiers.Alt)]
+        private static void OpenDockableFromShortcut()
+        {
+            OpenDockable();
+        }
+
+        [MenuItem(FloatingMenuPath)]
+        private static void OpenFloatingFromMenu()
+        {
+            TimelineNudgeWindow window = FindOpenWindow(isUtility: true);
+            if (window == null)
+            {
+                window = CreateWindow<TimelineNudgeWindow>("Timeline Nudge");
+                window._isUtilityWindow = true;
+                ConfigureWindow(window, applyDefaultSize: true);
+                window.ShowUtility();
+            }
+
+            window.Focus();
+        }
+
+        private static void OpenDockable()
+        {
+            TimelineNudgeWindow window = FindOpenWindow(isUtility: false);
+            if (window == null)
+            {
+                Type[] preferredDockTargets = InspectorWindowType == null
+                    ? Array.Empty<Type>()
+                    : new[] { InspectorWindowType };
+                window = CreateWindow<TimelineNudgeWindow>(
+                    "Timeline Nudge",
+                    preferredDockTargets);
+                ConfigureWindow(window, applyDefaultSize: false);
+                window.Show();
+            }
+
+            window.Focus();
+        }
+
+        private static TimelineNudgeWindow FindOpenWindow(bool isUtility)
+        {
+            return Resources.FindObjectsOfTypeAll<TimelineNudgeWindow>()
+                .FirstOrDefault(window => window._isUtilityWindow == isUtility);
+        }
+
+        private static void ConfigureWindow(
+            TimelineNudgeWindow window,
+            bool applyDefaultSize)
+        {
             window.minSize = MinimumSize;
-            if (window.position.width < MinimumSize.x || window.position.height < MinimumSize.y)
+            if (applyDefaultSize &&
+                (window.position.width < MinimumSize.x ||
+                 window.position.height < MinimumSize.y))
             {
                 window.position = new Rect(window.position.position, DefaultSize);
             }
-
-            window.Show();
         }
 
         private void OnEnable()

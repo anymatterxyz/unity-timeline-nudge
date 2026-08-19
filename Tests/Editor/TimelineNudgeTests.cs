@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.Timeline;
 using UnityEngine.UIElements;
@@ -270,7 +273,55 @@ namespace Baleev.TimelineNudge.Editor.Tests
             Assert.That(start, Is.EqualTo(3d));
             Assert.That(end, Is.EqualTo(14d));
             Assert.That(TimelineNudgeFraming.IsSupported, Is.True,
-                "Timeline 1.8.12 FrameSelectedAction.FrameRange compatibility hook was not found.");
+                "Timeline 1.8.12 framing compatibility hooks were not found.");
+            Assert.That(TimelineNudgeFraming.IsVerticalSupported, Is.True,
+                "Timeline 1.8.12 tree-view FrameItem compatibility hook was not found.");
+        }
+
+        [Test]
+        public void Framing_ChoosesTrackAtVerticalCenterOfSelectedRange()
+        {
+            TimelineAsset timeline = CreateTimelineAsset(30d);
+            var tracks = Enumerable.Range(0, 5)
+                .Select(index => timeline.CreateTrack<ActivationTrack>(null, $"Track {index}"))
+                .Cast<TrackAsset>()
+                .ToList();
+            TimelineClip upperClip = CreateClip((ActivationTrack)tracks[1], 1d, 1d);
+            TimelineClip lowerClip = CreateClip((ActivationTrack)tracks[3], 2d, 1d);
+
+            bool found = TimelineNudgeFraming.TryGetVerticalCenterTrack(
+                tracks,
+                new[] { lowerClip, upperClip },
+                out TrackAsset centerTrack);
+
+            Assert.That(found, Is.True);
+            Assert.That(centerTrack, Is.SameAs(tracks[2]));
+        }
+
+        [Test]
+        public void GroupSelection_FramesOnTheEditorTickAfterSelection()
+        {
+            var scheduled = new Queue<Action>();
+            bool selectionApplied = false;
+            bool framed = false;
+
+            TimelineNudgeGroupSelection.ScheduleSelectionThenFrame(
+                scheduled.Enqueue,
+                () => selectionApplied = true,
+                () =>
+                {
+                    Assert.That(selectionApplied, Is.True);
+                    framed = true;
+                });
+
+            Assert.That(scheduled, Has.Count.EqualTo(1));
+            scheduled.Dequeue().Invoke();
+            Assert.That(selectionApplied, Is.True);
+            Assert.That(framed, Is.False);
+            Assert.That(scheduled, Has.Count.EqualTo(1));
+
+            scheduled.Dequeue().Invoke();
+            Assert.That(framed, Is.True);
         }
 
         [Test]
@@ -294,6 +345,25 @@ namespace Baleev.TimelineNudge.Editor.Tests
             Assert.That(TimelineNudgePreferences.DefaultAutoFrameGroups, Is.True);
             Assert.That(root.Q<Button>("select-group-button"), Is.Not.Null);
             Assert.That(root.Q<Button>("save-group-button"), Is.Not.Null);
+        }
+
+        [Test]
+        public void Window_HasDockTargetAndRemappableOpenShortcut()
+        {
+            Assert.That(TimelineNudgeWindow.PreferredDockTarget, Is.Not.Null);
+            Assert.That(
+                TimelineNudgeWindow.PreferredDockTarget.FullName,
+                Is.EqualTo("UnityEditor.InspectorWindow"));
+
+            MethodInfo shortcutMethod = typeof(TimelineNudgeWindow).GetMethod(
+                "OpenDockableFromShortcut",
+                BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.That(shortcutMethod, Is.Not.Null);
+
+            ShortcutAttribute shortcut =
+                shortcutMethod.GetCustomAttribute<ShortcutAttribute>();
+            Assert.That(shortcut, Is.Not.Null);
+            Assert.That(shortcut.displayName, Is.EqualTo(TimelineNudgeWindow.OpenShortcutId));
         }
 
         private TimelineAsset CreateTimelineAsset(double frameRate)
