@@ -16,13 +16,13 @@ In Unity, open **Window > Package Management > Package Manager**, choose
 **Install package from git URL**, and enter:
 
 ```text
-https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.1.0
+https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.2.0
 ```
 
 Alternatively, add this entry to the project's `Packages/manifest.json` dependencies:
 
 ```json
-"com.baleev.timeline-nudge": "https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.1.0"
+"com.baleev.timeline-nudge": "https://github.com/anymatterxyz/unity-timeline-nudge.git#v0.2.0"
 ```
 
 ## Usage
@@ -54,11 +54,16 @@ Select clips and choose **Save As...** to create a named group. A saved group ca
 
 - reopen its source TimelineAsset;
 - restore all of its clips as the current Timeline selection;
+- automatically fit and center the Timeline view on the complete group range;
 - be updated from the current selection;
 - be deleted without changing any Timeline clips.
 
 Groups are stored per project in `ProjectSettings/TimelineNudgeGroups.asset`. References
 use Unity `GlobalObjectId` values, so moving clips in time does not break a group.
+
+Automatic framing uses Timeline's native **Frame Selected** range behaviour and is enabled
+by default. Clear **Center on selection** in the window to keep the current Timeline viewport;
+the preference is remembered by the Editor.
 
 A group requires a saved TimelineAsset and clips with persistent playable assets. If the
 same playable asset is used more than once on the same track, those clips are inherently

@@ -331,7 +331,11 @@ namespace Baleev.TimelineNudge.Editor
 
     internal static class TimelineNudgeGroupSelection
     {
-        internal static bool TrySelect(TimelineNudgeGroupData group, out string error)
+        internal static bool TrySelect(
+            TimelineNudgeGroupData group,
+            bool autoFrame,
+            out string error,
+            Action<string> delayedError = null)
         {
             if (!TimelineNudgeGroupUtility.TryResolveGroup(
                     group,
@@ -363,6 +367,15 @@ namespace Baleev.TimelineNudge.Editor
                 TimelineEditor.selectedClips = clips;
                 TimelineEditor.Refresh(RefreshReason.WindowNeedsRedraw);
                 timelineWindow.Focus();
+
+                if (autoFrame && !TimelineNudgeFraming.TryFrameClips(clips, out string frameError))
+                {
+                    string message = $"Группа выделена, но центрирование не выполнено: {frameError}";
+                    if (delayedError != null)
+                        delayedError(message);
+                    else
+                        Debug.LogWarning(message);
+                }
             };
 
             return true;

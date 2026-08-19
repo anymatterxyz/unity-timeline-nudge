@@ -254,6 +254,26 @@ namespace Baleev.TimelineNudge.Editor.Tests
         }
 
         [Test]
+        public void Framing_UsesFullSelectedClipRange()
+        {
+            TimelineAsset timeline = CreateTimelineAsset(30d);
+            ActivationTrack track = timeline.CreateTrack<ActivationTrack>(null, "Track");
+            TimelineClip first = CreateClip(track, 3d, 2d);
+            TimelineClip second = CreateClip(track, 10d, 4d);
+
+            bool found = TimelineNudgeFraming.TryGetClipRange(
+                new[] { second, null, first },
+                out double start,
+                out double end);
+
+            Assert.That(found, Is.True);
+            Assert.That(start, Is.EqualTo(3d));
+            Assert.That(end, Is.EqualTo(14d));
+            Assert.That(TimelineNudgeFraming.IsSupported, Is.True,
+                "Timeline 1.8.12 FrameSelectedAction.FrameRange compatibility hook was not found.");
+        }
+
+        [Test]
         public void UiAssets_LoadAndContainRequiredControls()
         {
             VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath);
@@ -269,6 +289,9 @@ namespace Baleev.TimelineNudge.Editor.Tests
             Assert.That(root.Q<Button>("nudge-left-button"), Is.Not.Null);
             Assert.That(root.Q<Button>("nudge-right-button"), Is.Not.Null);
             Assert.That(root.Q<DropdownField>("group-dropdown"), Is.Not.Null);
+            Assert.That(root.Q<Toggle>("auto-frame-toggle"), Is.Not.Null);
+            Assert.That(root.Q<Toggle>("auto-frame-toggle").value, Is.True);
+            Assert.That(TimelineNudgePreferences.DefaultAutoFrameGroups, Is.True);
             Assert.That(root.Q<Button>("select-group-button"), Is.Not.Null);
             Assert.That(root.Q<Button>("save-group-button"), Is.Not.Null);
         }
