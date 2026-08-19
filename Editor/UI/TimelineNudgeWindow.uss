@@ -71,6 +71,20 @@
     width: var(--tn-label-width);
 }
 
+.tn-auto-frame-toggle {
+    margin-top: var(--tn-space-xs);
+}
+
+.tn-auto-frame-toggle > .unity-base-field__label {
+    flex-grow: 1;
+    min-width: 0;
+    width: auto;
+}
+
+.tn-auto-frame-toggle > .unity-base-field__input {
+    flex-grow: 0;
+}
+
 .tn-save-row {
     margin-top: var(--tn-space-xs);
 }

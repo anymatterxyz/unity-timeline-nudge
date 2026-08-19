@@ -25,6 +25,7 @@ namespace Baleev.TimelineNudge.Editor
         private Button _nudgeLeftButton;
         private Button _nudgeRightButton;
         private DropdownField _groupDropdown;
+        private Toggle _autoFrameToggle;
         private Button _selectGroupButton;
         private Button _saveGroupButton;
         private Button _updateGroupButton;
@@ -109,6 +110,7 @@ namespace Baleev.TimelineNudge.Editor
             _nudgeLeftButton = rootVisualElement.Q<Button>("nudge-left-button");
             _nudgeRightButton = rootVisualElement.Q<Button>("nudge-right-button");
             _groupDropdown = rootVisualElement.Q<DropdownField>("group-dropdown");
+            _autoFrameToggle = rootVisualElement.Q<Toggle>("auto-frame-toggle");
             _selectGroupButton = rootVisualElement.Q<Button>("select-group-button");
             _saveGroupButton = rootVisualElement.Q<Button>("save-group-button");
             _updateGroupButton = rootVisualElement.Q<Button>("update-group-button");
@@ -124,6 +126,7 @@ namespace Baleev.TimelineNudge.Editor
                 || _nudgeLeftButton == null
                 || _nudgeRightButton == null
                 || _groupDropdown == null
+                || _autoFrameToggle == null
                 || _selectGroupButton == null
                 || _saveGroupButton == null
                 || _updateGroupButton == null
@@ -156,6 +159,9 @@ namespace Baleev.TimelineNudge.Editor
 
             _nudgeLeftButton.clicked += () => Nudge(TimelineNudgeDirection.Left);
             _nudgeRightButton.clicked += () => Nudge(TimelineNudgeDirection.Right);
+            _autoFrameToggle.SetValueWithoutNotify(TimelineNudgePreferences.AutoFrameGroups);
+            _autoFrameToggle.RegisterValueChangedCallback(evt =>
+                TimelineNudgePreferences.AutoFrameGroups = evt.newValue);
             _selectGroupButton.clicked += SelectCurrentGroup;
             _saveGroupButton.clicked += ShowSaveGroupRow;
             _updateGroupButton.clicked += UpdateCurrentGroup;
@@ -271,14 +277,24 @@ namespace Baleev.TimelineNudge.Editor
         private void SelectCurrentGroup()
         {
             TimelineNudgeGroupData group = GetSelectedGroup();
-            if (!TimelineNudgeGroupSelection.TrySelect(group, out string error))
+            if (!TimelineNudgeGroupSelection.TrySelect(
+                    group,
+                    TimelineNudgePreferences.AutoFrameGroups,
+                    out string error,
+                    delayedError =>
+                    {
+                        if (this != null)
+                            ShowFeedback(delayedError, HelpBoxMessageType.Warning, 8d);
+                    }))
             {
                 ShowFeedback(error, HelpBoxMessageType.Error, 8d);
                 return;
             }
 
             ShowFeedback(
-                $"Группа «{group.Name}» восстановлена в Timeline.",
+                TimelineNudgePreferences.AutoFrameGroups
+                    ? $"Группа «{group.Name}» восстановлена и показана в Timeline."
+                    : $"Группа «{group.Name}» восстановлена в Timeline.",
                 HelpBoxMessageType.Info);
         }
 

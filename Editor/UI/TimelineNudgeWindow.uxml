@@ -19,6 +19,7 @@
         <ui:VisualElement class="tn-section">
             <ui:Label text="Сохранённые группы" class="tn-section-title" />
             <ui:DropdownField name="group-dropdown" label="Группа" class="tn-field" />
+            <ui:Toggle name="auto-frame-toggle" label="Центрировать при выборе" value="true" class="tn-auto-frame-toggle" tooltip="Автоматически приблизить и центрировать Timeline на полном диапазоне выбранной группы" />
             <ui:VisualElement class="tn-row tn-row-spaced">
                 <ui:Button name="select-group-button" text="Выбрать" class="tn-secondary-button" tooltip="Открыть Timeline и снова выделить все клипы группы" />
                 <ui:Button name="save-group-button" text="Запомнить как…" class="tn-secondary-button-last" tooltip="Создать именованную группу из текущего выделения" />

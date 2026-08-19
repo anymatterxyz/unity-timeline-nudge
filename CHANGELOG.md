@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- Added automatic Timeline framing after restoring a saved clip group.
+- Framing fits the complete selected clip range using Timeline's native Frame Selected behaviour.
+- Added a persisted **Center on selection** toggle, enabled by default.
+
 ## 0.1.0
 
 - Added a compact UI Toolkit Editor window for frame-accurate Timeline clip movement.
